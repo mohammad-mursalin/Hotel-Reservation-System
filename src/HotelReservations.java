@@ -1,13 +1,17 @@
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class HotelReservations {
 
     private static String url = "jdbc:postgresql://localhost/postgresdemo";
     private static String username = "postgres";
-    private static String password = "";
+    private static String password = "*********";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         try {
             Connection connection = DriverManager.getConnection(url, username, password);
@@ -15,10 +19,12 @@ public class HotelReservations {
             Scanner sc = new Scanner(System.in);
 
             System.out.println();
-            System.out.println("Welcome to HOTEL MANAGEMENT SYSTEM");
-
+            System.out.println("Welcome to HOTEL RESERVATION SYSTEM");
+            
             while (true) {
 
+                System.out.println();
+                System.out.println("**** Main Menue ****");
                 System.out.println();
                 System.out.println("1. Reserve a Room");
                 System.out.println("2. View Reservations");
@@ -32,17 +38,19 @@ public class HotelReservations {
                 System.out.println();
 
                 switch (choice) {
-                    case 1 -> reserveRoom(connection, statement, sc);
+                    case 1 -> reserveRoom(statement, sc);
                     
                     case 2 -> viewReservations(statement, sc);
                     
-                    case 3 -> getRoomNumber(connection, statement, sc);
+                    case 3 -> getRoomNumber(statement, sc);
                     
-                    case 4 -> UpdateReservations(connection, statement, sc);
+                    case 4 -> UpdateReservations(statement, sc);
                     
-                    case 5 -> deleteReservations(connection, statement, sc);
+                    case 5 -> deleteReservations(statement, sc);
                     
-                    case 0 -> exit();
+                    case 0 -> { exit();
+                                return;
+                              }
                     
                     default -> System.out.println("Invalid choice. Please try again!!!");
                     
@@ -56,7 +64,7 @@ public class HotelReservations {
         }
     }
 
-    private static void reserveRoom(Connection connection, Statement statement, Scanner scanner) {
+    private static void reserveRoom(Statement statement, Scanner scanner) {
 
         System.out.print("Enter guest name : ");
         String guestName = scanner.next();
@@ -123,7 +131,7 @@ public class HotelReservations {
         }
     }
 
-    private static void getRoomNumber(Connection connection, Statement statement, Scanner scanner) {
+    private static void getRoomNumber(Statement statement, Scanner scanner) {
 
         System.out.print("Enter reservation id : ");
         int guestId = scanner.nextInt();
@@ -152,22 +160,23 @@ public class HotelReservations {
         }
     }
 
-    private static void UpdateReservations(Connection connection, Statement statement, Scanner scanner) {
+    private static void UpdateReservations(Statement statement, Scanner scanner) {
 
         System.out.print("Enter reservation id : ");
         int guestId = scanner.nextInt();
-        System.out.print("Enter new guest name : ");
-        String newGuestName = scanner.next();
-        scanner.nextLine();
-        System.out.print("Enter new room number : ");
-        int newRoom = scanner.nextInt();
-        System.out.print("Enter new contact number : ");
-        String newContact = scanner.next();
-        scanner.nextLine();
 
         if(reservationExist(guestId, statement)) {
 
-            String query = "update reservations set guest_name = " +newGuestName+ " , room_number = "+newRoom+" , contact_number = "+newContact+" where reservation_id = " +guestId;
+            System.out.print("Enter new guest name : ");
+            String newGuestName = scanner.next();
+            scanner.nextLine();
+            System.out.print("Enter new room number : ");
+            int newRoom = scanner.nextInt();
+            System.out.print("Enter new contact number : ");
+            String newContact = scanner.next();
+            scanner.nextLine();
+
+            String query = "update reservations set guest_name = '" +newGuestName+ "' , room_number = "+newRoom+" , contact_number = '"+newContact+"' where reservation_id = " +guestId;
 
             try {
                 
@@ -193,7 +202,7 @@ public class HotelReservations {
         }
     }
 
-    private static void deleteReservations(Connection connection, Statement statement, Scanner scanner) {
+    private static void deleteReservations(Statement statement, Scanner scanner) {
 
         System.out.print("Enter reservation id : ");
         int guestId = scanner.nextInt();
@@ -226,10 +235,6 @@ public class HotelReservations {
         }
     }
 
-    private static void exit() {
-
-    }
-
     private static boolean reservationExist(int guestId, Statement statement) {
 
         String query = "select reservation_id from reservations where reservation_id = " +guestId;
@@ -246,5 +251,25 @@ public class HotelReservations {
             return false;
         }
         
+    }
+
+    private static void exit() throws InterruptedException {
+
+        int i = 0;
+
+        System.out.print("Exiting main menue");
+
+        while( i<5 ) {
+
+            System.out.print(".");
+            Thread.sleep(500);
+
+            i++;
+
+        }
+
+        System.out.println();
+        System.out.println("Thank you for using our service.");
+        System.out.println();
     }
 }
