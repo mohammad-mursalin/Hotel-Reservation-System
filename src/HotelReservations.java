@@ -48,10 +48,7 @@ public class HotelReservations {
                     
                 }
 
-                
             }
-
-            
 
         } catch (SQLException e) {
 
@@ -157,15 +154,97 @@ public class HotelReservations {
 
     private static void UpdateReservations(Connection connection, Statement statement, Scanner scanner) {
 
+        System.out.print("Enter reservation id : ");
+        int guestId = scanner.nextInt();
+        System.out.print("Enter new guest name : ");
+        String newGuestName = scanner.next();
+        scanner.nextLine();
+        System.out.print("Enter new room number : ");
+        int newRoom = scanner.nextInt();
+        System.out.print("Enter new contact number : ");
+        String newContact = scanner.next();
+        scanner.nextLine();
 
+        if(reservationExist(guestId, statement)) {
+
+            String query = "update reservations set guest_name = " +newGuestName+ " , room_number = "+newRoom+" , contact_number = "+newContact+" where reservation_id = " +guestId;
+
+            try {
+                
+                int affectedRow = statement.executeUpdate(query);
+
+                if(affectedRow > 0 ) {
+
+                    System.out.println("Reservation updated successfully for the given id " +guestId);
+                }
+                else {
+
+                    System.out.println("Reservation updatation is failed for the given id " + guestId);
+                }
+
+            } catch (SQLException e) {
+                
+                System.out.println(e.getMessage());
+            }
+        }
+        else {
+
+            System.out.println("Reservation not found for the given id.");
+        }
     }
 
     private static void deleteReservations(Connection connection, Statement statement, Scanner scanner) {
 
+        System.out.print("Enter reservation id : ");
+        int guestId = scanner.nextInt();
 
+        if(reservationExist(guestId, statement)) {
+
+            String query = "delete from reservations where reservation_id = " +guestId;
+
+            try {
+                
+                int affectedRow = statement.executeUpdate(query);
+
+                if(affectedRow > 0 ) {
+
+                    System.out.println("Reservation deleted successfully for the given id " +guestId);
+                }
+                else {
+
+                    System.out.println("Reservation deletation is failed for the given id " + guestId);
+                }
+
+            } catch (SQLException e) {
+                
+                System.out.println(e.getMessage());
+            }
+        }
+        else {
+
+            System.out.println("Reservation not found for the given id.");
+        }
     }
 
     private static void exit() {
 
+    }
+
+    private static boolean reservationExist(int guestId, Statement statement) {
+
+        String query = "select reservation_id from reservations where reservation_id = " +guestId;
+        try {
+
+            ResultSet rset = statement.executeQuery(query);
+
+            return rset.next();
+
+        } catch (SQLException e) {
+            
+            e.printStackTrace();
+
+            return false;
+        }
+        
     }
 }
