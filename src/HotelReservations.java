@@ -16,7 +16,7 @@ public class HotelReservations {
         try {
             Connection connection = DriverManager.getConnection(url, username, password);
             Statement statement = connection.createStatement();
-            Scanner sc = new Scanner(System.in);
+            Scanner scanner = new Scanner(System.in);
 
             System.out.println();
             System.out.println("Welcome to HOTEL RESERVATION SYSTEM");
@@ -34,21 +34,24 @@ public class HotelReservations {
                 System.out.println("0. Exit");
                 System.out.println();
                 System.out.print("Chose an option : ");
-                int choice = sc.nextInt();
+                int choice = scanner.nextInt();
                 System.out.println();
 
                 switch (choice) {
-                    case 1 -> reserveRoom(statement, sc);
+                    case 1 -> reserveRoom(statement, scanner);
                     
-                    case 2 -> viewReservations(statement, sc);
+                    case 2 -> viewReservations(statement, scanner);
                     
-                    case 3 -> getRoomNumber(statement, sc);
+                    case 3 -> getRoomNumber(statement, scanner);
                     
-                    case 4 -> UpdateReservations(statement, sc);
+                    case 4 -> UpdateReservations(statement, scanner);
                     
-                    case 5 -> deleteReservations(statement, sc);
+                    case 5 -> deleteReservations(statement, scanner);
                     
                     case 0 -> { exit();
+                                statement.close();
+                                connection.close();
+                                scanner.close();
                                 return;
                               }
                     
@@ -124,6 +127,8 @@ public class HotelReservations {
 
             System.out.println("+----------------+-----------------+---------------+---------------------+----------------------------+");
 
+            resultSet.close();
+
         } catch (SQLException e) {
 
             e.printStackTrace();
@@ -154,6 +159,8 @@ public class HotelReservations {
             }
 
 
+            resultSet.close();
+            
         } catch (SQLException e) {
             
             e.printStackTrace();
@@ -240,10 +247,10 @@ public class HotelReservations {
         String query = "select reservation_id from reservations where reservation_id = " +guestId;
         try {
 
-            ResultSet rset = statement.executeQuery(query);
+            ResultSet resultSet = statement.executeQuery(query);
 
-            return rset.next();
-
+            return resultSet.next();
+            
         } catch (SQLException e) {
             
             e.printStackTrace();
